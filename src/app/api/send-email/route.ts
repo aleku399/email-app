@@ -58,10 +58,10 @@ ${message}`,
 
 // Handle the preflight OPTIONS request for CORS
 export function OPTIONS() {
-  const response = NextResponse.json({}, { status: 204 });
-
-  // Apply CORS headers to the preflight response
-  corsMiddleware(response);
-
+  const response = new NextResponse(null, { status: 204 });
+  
+  // Apply CORS headers
+  corsMiddleware(response); 
+  
   return response;
 }
