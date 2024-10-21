@@ -31,9 +31,32 @@ ${message}`,
 
   try {
     await transporter.sendMail(mailOptions);
-    return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
+
+    // Set CORS headers
+    const response = NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
+    response.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
+    response.headers.set('Access-Control-Allow-Methods', 'POST');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    
+    return response;
   } catch (error) {
     console.error('Error sending email:', error);
-    return NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
+
+    const errorResponse = NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
+    errorResponse.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'POST');
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    
+    return errorResponse;
   }
+}
+
+// Handle OPTIONS request for preflight checks
+export function OPTIONS() {
+  const response = NextResponse.json({}, { status: 204 });
+  response.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
+  response.headers.set('Access-Control-Allow-Methods', 'POST');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  
+  return response;
 }
