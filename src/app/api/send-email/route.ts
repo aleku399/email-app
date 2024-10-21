@@ -1,8 +1,22 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+// CORS middleware to set headers
+const corsMiddleware = (res: NextResponse) => {
+  res.headers.set('Access-Control-Allow-Origin', '*');
+  res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  res.headers.set('Vary', 'Origin');
+};
+
 // Handle the POST request for sending emails
 export async function POST(req: Request) {
+  // Create the initial response object
+  const response = NextResponse.json({}, { status: 200 });
+
+  // Apply CORS headers
+  corsMiddleware(response);
+
   try {
     const { name, lastName, organisation, email, phoneNumber, message, country, subject } = await req.json();
 
@@ -33,28 +47,21 @@ ${message}`,
 
     await transporter.sendMail(mailOptions);
 
-    const response = NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
-    // Set CORS headers for the actual POST request
-    response.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
-    response.headers.set('Access-Control-Allow-Methods', 'POST');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return response;
+    // Return success response
+    return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error sending email:', error);
-    const errorResponse = NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
-    errorResponse.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
-    errorResponse.headers.set('Access-Control-Allow-Methods', 'POST');
-    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return errorResponse;
+    // Return error response
+    return NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
   }
 }
 
 // Handle the preflight OPTIONS request for CORS
 export function OPTIONS() {
   const response = NextResponse.json({}, { status: 204 });
-  // Set CORS headers for preflight requests
-  response.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
-  response.headers.set('Access-Control-Allow-Methods', 'POST');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Apply CORS headers to the preflight response
+  corsMiddleware(response);
+
   return response;
 }
