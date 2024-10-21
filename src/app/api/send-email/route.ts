@@ -3,7 +3,8 @@ import nodemailer from 'nodemailer';
 
 // CORS middleware to set headers
 const corsMiddleware = (res: NextResponse) => {
-  res.headers.set('Access-Control-Allow-Origin', '*');
+  // res.headers.set('Access-Control-Allow-Origin', '*');
+  res.headers.set('Access-Control-Allow-Origin', 'https://www.henkmininglogistics.com');
   res.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
   res.headers.set('Vary', 'Origin');
